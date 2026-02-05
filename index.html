@@ -1226,7 +1226,50 @@
             .hero-actions { flex-direction: column; }
             .btn { justify-content: center; }
         }
+        body.pdf-rendering {
+            --bg: #fff; --bg-alt: #fafafa; --surface: #f9f9f9; --surface-2: #f3f3f3;
+            --surface-3: #eee; --border: #ddd; --border-hover: #ccc;
+            --text: #111; --text-secondary: #444; --text-muted: #777;
+            --accent: #2563eb; --accent-light: #2563eb; --accent-glow: #dbeafe;
+            background: #fff;
+        }
+        body.pdf-rendering #particles,
+        body.pdf-rendering .scroll-progress,
+        body.pdf-rendering .hero-orb,
+        body.pdf-rendering .hero-cursor-glow,
+        body.pdf-rendering .hero-orb-1,
+        body.pdf-rendering .hero-orb-2,
+        body.pdf-rendering .hero-orb-3,
+        body.pdf-rendering nav,
+        body.pdf-rendering .hero-actions,
+        body.pdf-rendering .section-divider,
+        body.pdf-rendering .card-glow,
+        body.pdf-rendering .typewriter-cursor,
+        body.pdf-rendering .no-print { display: none !important; }
+
+        body.pdf-rendering .hero { min-height: auto; padding: 24px 0; }
+        body.pdf-rendering .hero h1 { font-size: 36px; }
+        body.pdf-rendering .gradient-text,
+        body.pdf-rendering .stat-value {
+            -webkit-text-fill-color: var(--accent);
+            background: none;
+        }
+        body.pdf-rendering section { padding: 28px 0; }
+        body.pdf-rendering .section-header { margin-bottom: 20px; }
+        body.pdf-rendering .skill-card,
+        body.pdf-rendering .project-card,
+        body.pdf-rendering .edu-card { break-inside: avoid; }
+        body.pdf-rendering .exp-item { grid-template-columns: 140px 1fr; gap: 20px; padding: 20px 0; }
+        body.pdf-rendering .hero-stats { max-width: 100%; }
+        body.pdf-rendering .stat { padding: 12px 8px; }
+        body.pdf-rendering .stat-value { font-size: 22px; }
+        body.pdf-rendering .stat-label { font-size: 10px; }
+        body.pdf-rendering .skill-card { padding: 16px; }
+        body.pdf-rendering .project-card { padding: 16px; }
+        body.pdf-rendering::before { display: none !important; }
+
     </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.2/html2pdf.bundle.min.js" integrity="sha512-MpDFIChbcXl2QgipQrt1VcPHMldRILetapBEAYKOoB1VFyF0+bfMhGFEABmNGq3JAnEACRmg0NkFVTb2OkfCQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 </head>
 <body>
 
@@ -1282,7 +1325,7 @@
                         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
                         Get in Touch
                     </a>
-                    <button class="btn btn-secondary" onclick="window.print()">
+                    <button class="btn btn-secondary" id="downloadBtn" onclick="downloadPDF()">
                         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
                         Download PDF
                     </button>
@@ -1998,6 +2041,36 @@
         });
 
     })();
+
+    function downloadPDF() {
+        const btn = document.getElementById('downloadBtn');
+        const originalText = btn.innerHTML;
+        btn.innerHTML = '<svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="animation:spin 1s linear infinite"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg> Generating...';
+        btn.disabled = true;
+
+        document.body.classList.add('pdf-rendering');
+
+        const opt = {
+            margin: [10, 10, 10, 10],
+            filename: 'Constantin_Petrut_CV.pdf',
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: { scale: 2, useCORS: true, letterRendering: true, scrollY: 0 },
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+            pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
+        };
+
+        html2pdf().set(opt).from(document.body).save().then(function() {
+            document.body.classList.remove('pdf-rendering');
+            btn.innerHTML = originalText;
+            btn.disabled = false;
+        }).catch(function() {
+            document.body.classList.remove('pdf-rendering');
+            btn.innerHTML = originalText;
+            btn.disabled = false;
+            window.print();
+        });
+    }
     </script>
+    <style>@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}</style>
 </body>
 </html>
