@@ -2037,6 +2037,12 @@
         window.scrollTo(0, 0);
 
         setTimeout(function() {
+            var fullHeight = Math.max(
+                document.body.scrollHeight,
+                document.body.offsetHeight,
+                document.documentElement.scrollHeight
+            );
+
             var opt = {
                 margin: [5, 5, 5, 5],
                 filename: 'Constantin_Petrut_CV.pdf',
@@ -2045,7 +2051,11 @@
                     scale: 2,
                     useCORS: true,
                     letterRendering: true,
+                    scrollX: 0,
                     scrollY: 0,
+                    windowWidth: document.documentElement.scrollWidth,
+                    windowHeight: fullHeight,
+                    height: fullHeight,
                     backgroundColor: '#050505'
                 },
                 jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
@@ -2063,7 +2073,7 @@
                 console.error('PDF generation failed:', err);
                 window.print();
             });
-        }, 100);
+        }, 200);
     }
     </script>
     <style>@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}</style>
